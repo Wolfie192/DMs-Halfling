@@ -4,15 +4,15 @@ import shutil
 import pymupdf
 
 
-def get_bin_dir() -> os.path:
-	if not os.path.exists("./bin"):
-		os.mkdir("./bin")
-	bin_dir: os.path = os.path.abspath("./bin")
+def bin_directory():
+	bin_dir = os.path.abspath("./bin")
+	if not os.path.exists(bin_dir):
+		os.mkdir(bin_dir)
 	return bin_dir
 
 
 def extract_file(file_path):
-	bin_dir: os.path = get_bin_dir()
+	bin_dir = bin_directory()
 	doc = pymupdf.open(file_path)
 	
 	if doc.metadata["title"] == "":
@@ -23,15 +23,15 @@ def extract_file(file_path):
 	scenario: int = int(doc.metadata["title"][-7:-5])
 	print(f"Extracting PDF for Season {season}, Scenario {scenario}")
 	
-	output_dir: os.path = os.path.join(bin_dir, f"S{season}S{scenario}")
+	output_dir = os.path.join(bin_dir, f"S{season}S{scenario}")
 	if not os.path.exists(output_dir):
 		os.mkdir(output_dir)
 
-	asset_dir: os.path = os.path.join(output_dir, "Assets")
+	asset_dir = os.path.join(output_dir, "Assets")
 	if not os.path.exists(asset_dir):
 		os.mkdir(asset_dir)
 		
-	img_dir: os.path = os.path.join(asset_dir, "Extracted Images")
+	img_dir = os.path.join(asset_dir, "Extracted Images")
 	if not os.path.exists(img_dir):
 		os.mkdir(img_dir)
 	
