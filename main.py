@@ -1,10 +1,14 @@
 import os
 
-import gui
+import MainWindow
+import pdf
 
 
 def main():
-	gui.launch_app()
+	bin_dir = os.path.abspath("./bin")
+	pdf.check_dir(bin_dir)
 	
+	MainWindow.run(bin_dir)
 	
+
 main()
