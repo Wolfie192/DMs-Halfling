@@ -15,6 +15,7 @@ class MainWindow:
 		
 		self.season: str = None
 		self.scenario: str = None
+		self.continue_scenario: bool = False
 	
 	def start_scenario_button_visible(self) -> bool:
 		start_scenario_button_visible: bool = False
@@ -144,6 +145,7 @@ class MainWindow:
 				
 			elif event == "Continue Scenario Button":
 				#TODO
+				self.continue_scenario = True
 				pass
 			
 			elif event == "Import New PDF Button":
