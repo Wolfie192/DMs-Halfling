@@ -1,7 +1,9 @@
+import json
 import os
 import shutil
 
 import pymupdf
+from pymupdf import TEXT_PRESERVE_IMAGES
 
 
 def check_dir(dir_path):
@@ -37,6 +39,7 @@ def extract_file(root_dir, file_path) -> bool:
 	
 	shutil.copy(file_path, output_dir)
 	extract_images(doc, img_dir)
+	extract_text(doc, output_dir)
 	
 	return True
 
@@ -57,3 +60,16 @@ def extract_images(doc, img_dir):
 			
 			with open(file_path, "wb") as img_file:
 				img_file.write(image_bytes)
+
+
+def extract_text(doc, output_dir):
+	output_file = os.path.join(output_dir, "extracted_text.json")
+	for page in doc:
+		text = page.get_text("dict", sort = True, flags = pymupdf.TEXTFLAGS_DICT & ~pymupdf.TEXT_PRESERVE_IMAGES)
+	
+	with open(output_file, "w", encoding = "utf-8") as f:
+		json.dump(text, f, ensure_ascii = False, indent = 4)
+
+
+if __name__ == "__main__":
+	pass
