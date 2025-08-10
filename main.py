@@ -1,12 +1,11 @@
-import os
-
 import Halfling
-import pdf
+import os
+from tools import PDF
 
 
 def main():
 	bin_dir = os.path.abspath("./bin")
-	pdf.check_dir(bin_dir)
+	PDF.check_dir(bin_dir)
 	
 	Halfling.start_app(bin_dir)
 	
