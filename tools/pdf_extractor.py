@@ -84,16 +84,20 @@ def extract_images(output_dir, doc):
 		image_list = page.get_images(full = True)
 		
 		for img_index, img_info in enumerate(image_list):
-			xref = img_info[0]
-			base_image = doc.extract_image(xref)
-			
-			image_bytes = base_image["image"]
-			image_ext = base_image["ext"]
-			
-			file_path = os.path.join(img_dir, f"extracted_image_page{page_num+1}_img{img_index+1}{image_ext}")
-			
-			with open(file_path, "wb") as img_file:
-				img_file.write(image_bytes)
+			match img_index:
+				case None:
+					pass
+				case _:
+					xref = img_info[0]
+					base_image = doc.extract_image(xref)
+					
+					image_bytes = base_image["image"]
+					image_ext = base_image["ext"]
+					
+					file_path = os.path.join(img_dir, f"extracted_image_page{page_num+1}_img{img_index+1}.{image_ext}")
+					
+					with open(file_path, "wb") as img_file:
+						img_file.write(image_bytes)
 
 
 def extract_text(output_dir, doc):
