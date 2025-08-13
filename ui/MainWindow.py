@@ -1,6 +1,6 @@
 import os
 import FreeSimpleGUI as sg
-from ui import PDFImportWindow
+from ui import NewScenarioWindow, PDFImportWindow
 
 
 def build(directories):
@@ -23,9 +23,15 @@ def main_loop(window, directories):
 			break
 		elif event == "Import PDFs Button":
 			print("Import PDFs Button Pressed")
-			PDFImportWindow.build(directories)
+			pdf_window = PDFImportWindow.build(directories)
+			if not pdf_window.metadata:
+				window["Start New Scenario Button"].update(visible = True)
+				window.refresh()
+			elif pdf_window.metadata == "Win Closed":
+				pass
 		elif event == "Start New Scenario Button":
 			print("Start New Scenario Button Pressed")
+			NewScenarioWindow.build(directories)
 		elif event == "Continue Scenario Button":
 			print("Continue Scenario Button Pressed")
 	

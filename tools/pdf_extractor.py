@@ -14,12 +14,38 @@ def extract_file(directories, file_path) -> str:
 		error = "Only official Paizo PDFs are accepted."
 		return error
 	
-	season: int = int(doc.metadata["title"][-9:-7])
-	scenario: int = int(doc.metadata["title"][-7:-5])
+	print(doc.metadata["title"])
+
+	try:
+		tier: str = str(doc.metadata["title"].replace(").pdf", "").split(" ")[-1])
+		print(tier)
+	except ValueError:
+		print(f"Error, invalid value, {doc.metadata["title"][13:16]} received")
+		
+	try:	
+		if int(doc.metadata["title"][6:8]) == 60 or int(doc.metadata["title"][6:8]) == 61:
+			season: int = int(doc.metadata["title"][5:7])
+			scenario: int = int(doc.metadata["title"][7:9])
+		else:
+			season: int = int(doc.metadata["title"][6:8])
+			scenario: int = int(doc.metadata["title"][8:10])
+		print(season, scenario)
+	except ValueError:
+		print(f"Error, invalid value, ({doc.metadata["title"][6:8]}, {doc.metadata["title"][8:10]}) received")
 	
-	output_dir = os.path.join(directories["Modules"], f"S{season}S{scenario}")
+	season_dir = os.path.join(directories["Modules"], f"Season {season}")
+	check_dir(season_dir)
 	
+	try:
+		int(tier.split("-")[0])
+		output_dir = os.path.join(season_dir, f"Scenario {scenario} ({tier})")
+	except ValueError:
+		output_dir = os.path.join(season_dir, f"Scenario {scenario}")
+	check_dir(output_dir)
+	
+	print(f"Extracting images from season {season}, scenario {scenario}")
 	extract_images(output_dir, doc)
+	print(f"Extracting text from season {season}, scenario {scenario}")
 	# noinspection PyTypeChecker
 	extract_text(output_dir, doc)
 	
@@ -58,3 +84,7 @@ def extract_text(output_dir, doc):
 			text = page.get_text().encode("utf-8")
 			text_file.write(text)
 			text_file.write(bytes((12, )))
+
+
+if __name__ == "__main__":
+	pass

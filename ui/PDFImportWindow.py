@@ -4,7 +4,7 @@ import FreeSimpleGUI as sg
 from tools import pdf_extractor
 
 
-def build(directories):
+def build(directories) -> sg.Window:
 	sg.theme("DarkGrey")
 	
 	window_layout = [
@@ -14,20 +14,26 @@ def build(directories):
 	window = sg.Window("PDF Importer", window_layout, relative_location = (0, 0), resizable = True, element_padding = 10, margins = (10, 10))
 	
 	main_loop(window, directories)
+	
+	return window
 
 
 def main_loop(window, directories):
 	while True:
 		event, values = window.read(timeout = 1000)
 		if event == sg.WIN_CLOSED:
+			window.metadata = "Win Closed"
 			break
 		if event == "Import Selected Button":
 			print("Import Selected Button Pressed")
 			files = values["Selected Files Input"].split(";")
 			for file in files:
 				file_path = os.path.abspath(file)
-				pdf_extractor.extract_file(directories, file_path)
-	
+				error = pdf_extractor.extract_file(directories, file_path)
+				if error:
+					window.metadata = error
+			break
+					
 	window.close()
 
 
