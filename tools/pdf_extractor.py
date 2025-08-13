@@ -101,7 +101,7 @@ def extract_text(output_dir, doc):
 	
 	with open(output_file, "ab") as text_file:
 		for page in doc:
-			text = page.get_text()
+			text = page.get_text().encode("utf-8")
 			text_file.write(text)
 			text_file.write(bytes((12, )))
 

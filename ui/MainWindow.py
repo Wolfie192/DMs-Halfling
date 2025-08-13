@@ -22,7 +22,6 @@ def main_loop(window, directories):
 		if event == sg.WIN_CLOSED:
 			break
 		elif event == "Import PDFs Button":
-			print("Import PDFs Button Pressed")
 			pdf_window = PDFImportWindow.build(directories)
 			if not pdf_window.metadata:
 				window["Start New Scenario Button"].update(visible = True)

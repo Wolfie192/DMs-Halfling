@@ -111,11 +111,16 @@ def main_loop(window, available_scenarios, directories):
 	window.close()
 
 def select_season_column(available_scenarios) -> sg.Column:
+	implemented_scenarios: dict = mm.implemented_scenarios()
 	layout = []
 	
 	for key, _ in available_scenarios.items():
 		if available_scenarios[key]["Available"]:
-			button = sg.Button(f"{key}", key = f"{key} Season Button", expand_x = True, expand_y = True)
+			if len(implemented_scenarios[key]) >= 1:
+				button = sg.Button(f"{key}", key = f"{key} Season Button", expand_x = True, expand_y = True)
+			else:
+				button = sg.Button(f"{key}", key = f"{key} Season Button", expand_x = True, expand_y = True, disabled = True)
+
 			layout.append([button])
 	
 	layout.append([sg.Sizer(h_pixels = 300)])
@@ -136,10 +141,14 @@ def select_scenario_column() -> sg.Column:
 
 
 def update_scenario_column(selected_season, window, available_scenarios):
+	implemented_scenarios: dict = mm.implemented_scenarios()
 	button_list = []
 	available_scenarios[selected_season]["Scenarios"].sort(key = int)
 	for item in available_scenarios[selected_season]["Scenarios"]:
-		button = sg.Button(f"{item}", key = f"{item} Scenario Button", expand_x = True, expand_y = True)
+		if item in implemented_scenarios[selected_season]:
+			button = sg.Button(f"{item}", key = f"{item} Scenario Button", expand_x = True, expand_y = True)
+		else:
+			button = sg.Button(f"{item}", key = f"{item} Scenario Button", expand_x = True, expand_y = True, disabled = True)
 		button_list.append(button)
 	
 	i = 0

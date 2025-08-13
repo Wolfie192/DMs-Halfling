@@ -25,7 +25,6 @@ def main_loop(window, directories):
 			window.metadata = "Win Closed"
 			break
 		if event == "Import Selected Button":
-			print("Import Selected Button Pressed")
 			files = values["Selected Files Input"].split(";")
 			for file in files:
 				file_path = os.path.abspath(file)
