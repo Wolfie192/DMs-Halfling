@@ -1,6 +1,8 @@
 import os
 import pymupdf
 
+import tools.ModuleManager as mm
+
 
 def check_dir(dir_path):
 	if not os.path.exists(dir_path):
@@ -52,6 +54,7 @@ def extract_file(directories, file_path) -> str:
 			season_out = f"Season {season}"
 			scenario_out = f"Scenario {scenario}"
 	
+	print(season_out, scenario)
 	
 	season_dir = os.path.join(directories["Modules"], season_out)
 	check_dir(season_dir)
@@ -63,16 +66,18 @@ def extract_file(directories, file_path) -> str:
 		output_dir = os.path.join(season_dir, scenario_out)
 	check_dir(output_dir)
 	
-	print(f"Extracting images from ({season}, {scenario})")
-	extract_images(output_dir, doc)
-	print(f"Extracting text from ({season}, {scenario})")
+	#print(f"Extracting images from ({season}, {scenario})")
+	extract_images(output_dir, doc, season_out, scenario)
+	#print(f"Extracting text from ({season}, {scenario})")
 	# noinspection PyTypeChecker
 	extract_text(output_dir, doc)
 	
 	return ""
 
 
-def extract_images(output_dir, doc):
+def extract_images(output_dir, doc, season, scenario):
+	images_needed = mm.images_needed()
+	
 	asset_dir = os.path.join(output_dir, "Assets")
 	check_dir(asset_dir)
 	
@@ -84,20 +89,20 @@ def extract_images(output_dir, doc):
 		image_list = page.get_images(full = True)
 		
 		for img_index, img_info in enumerate(image_list):
-			match img_index:
-				case None:
-					pass
-				case _:
-					xref = img_info[0]
-					base_image = doc.extract_image(xref)
-					
-					image_bytes = base_image["image"]
-					image_ext = base_image["ext"]
-					
-					file_path = os.path.join(img_dir, f"extracted_image_page{page_num+1}_img{img_index+1}.{image_ext}")
-					
-					with open(file_path, "wb") as img_file:
-						img_file.write(image_bytes)
+			xref = img_info[0]
+			base_image = doc.extract_image(xref)
+			
+			image_bytes = base_image["image"]
+			image_ext = base_image["ext"]
+			
+			file_path = os.path.join(img_dir, f"extracted_image_page{page_num+1}_img{img_index+1}.{image_ext}")
+			
+			print(page_num, img_index)
+			if (page_num + 1, img_index + 1) in images_needed[season][scenario]:
+				with open(file_path, "wb") as img_file:
+					img_file.write(image_bytes)
+			else:
+				pass
 
 
 def extract_text(output_dir, doc):
