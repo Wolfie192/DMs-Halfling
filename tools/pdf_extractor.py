@@ -22,30 +22,55 @@ def extract_file(directories, file_path) -> str:
 	except ValueError:
 		print(f"Error, invalid value, {doc.metadata["title"][13:16]} received")
 		
+	print(doc.metadata["title"])
+		
 	try:	
-		if int(doc.metadata["title"][6:8]) == 60 or int(doc.metadata["title"][6:8]) == 61:
-			season: int = int(doc.metadata["title"][5:7])
-			scenario: int = int(doc.metadata["title"][7:9])
+		if doc.metadata["title"][6:8] == "60" or doc.metadata["title"][6:8] == "61":
+			season_str: str = doc.metadata["title"][5:7]
+			scenario_str: str = doc.metadata["title"][7:9]
+		elif doc.metadata["title"][5:8] == "Q00":
+			season_str: str = "0"
+			scenario_str: str = doc.metadata["title"][8:10]
+		elif doc.metadata["title"][5:7] == "Q0":
+			season_str: str = "0"
+			scenario_str: str = doc.metadata["title"][7:9]
+		elif doc.metadata["title"][5] == "B":
+			season_str: str = "99"
+			scenario_str: str = doc.metadata["title"][8:10].replace("E", "")
 		else:
-			season: int = int(doc.metadata["title"][6:8])
-			scenario: int = int(doc.metadata["title"][8:10])
-		print(season, scenario)
+			season_str: str = doc.metadata["title"][6:8]
+			scenario_str: str = doc.metadata["title"][8:10]
+		
+		season: int = int(season_str)
+		scenario: int = int(scenario_str)
 	except ValueError:
-		print(f"Error, invalid value, ({doc.metadata["title"][6:8]}, {doc.metadata["title"][8:10]}) received")
+		print(f"Error, invalid value, ({season_str}, {scenario_str}) received")
+
+	match season:
+		case 0:
+			season_out = "Quests"
+			scenario_out = f"Quest {scenario}"
+		case 99:
+			season_out = "Bounties"
+			scenario_out = f"Bounty {scenario}"
+		case _:
+			season_out = f"Season {season}"
+			scenario_out = f"Scenario {scenario}"
 	
-	season_dir = os.path.join(directories["Modules"], f"Season {season}")
+	
+	season_dir = os.path.join(directories["Modules"], season_out)
 	check_dir(season_dir)
 	
 	try:
 		int(tier.split("-")[0])
-		output_dir = os.path.join(season_dir, f"Scenario {scenario} ({tier})")
+		output_dir = os.path.join(season_dir, scenario_out + f"({tier})")
 	except ValueError:
-		output_dir = os.path.join(season_dir, f"Scenario {scenario}")
+		output_dir = os.path.join(season_dir, scenario_out)
 	check_dir(output_dir)
 	
-	print(f"Extracting images from season {season}, scenario {scenario}")
+	print(f"Extracting images from ({season}, {scenario})")
 	extract_images(output_dir, doc)
-	print(f"Extracting text from season {season}, scenario {scenario}")
+	print(f"Extracting text from ({season}, {scenario})")
 	# noinspection PyTypeChecker
 	extract_text(output_dir, doc)
 	
