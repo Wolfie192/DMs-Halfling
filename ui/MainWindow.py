@@ -30,10 +30,11 @@ def main_loop(window, directories):
 			elif pdf_window.metadata == "Win Closed":
 				pass
 		elif event == "Start New Scenario Button":
-			print("Start New Scenario Button Pressed")
+			window.close()
 			NewScenarioWindow.build(directories)
 		elif event == "Continue Scenario Button":
-			print("Continue Scenario Button Pressed")
+			#TODO Set up ability to continue from a save and set up saving progress to allow for continuing from a crash.
+			window.close()
 	
 	window.close()
 

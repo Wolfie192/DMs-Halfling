@@ -14,15 +14,10 @@ def extract_file(directories, file_path) -> str:
 		error = "Only official Paizo PDFs are accepted."
 		return error
 	
-	print(doc.metadata["title"])
-
 	try:
 		tier: str = str(doc.metadata["title"].replace(").pdf", "").split(" ")[-1])
-		print(tier)
 	except ValueError:
 		print(f"Error, invalid value, {doc.metadata["title"][13:16]} received")
-		
-	print(doc.metadata["title"])
 		
 	try:	
 		if doc.metadata["title"][6:8] == "60" or doc.metadata["title"][6:8] == "61":
@@ -106,7 +101,7 @@ def extract_text(output_dir, doc):
 	
 	with open(output_file, "ab") as text_file:
 		for page in doc:
-			text = page.get_text().encode("utf-8")
+			text = page.get_text()
 			text_file.write(text)
 			text_file.write(bytes((12, )))
 
