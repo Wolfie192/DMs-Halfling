@@ -76,7 +76,7 @@ def extract_file(directories, file_path) -> str:
 
 
 def extract_images(output_dir, doc, season, scenario):
-	#images_needed = mm.images_needed()
+	image_list = mm.implemented_scenarios(season = season, scenario = scenario)
 	
 	asset_dir = os.path.join(output_dir, "Assets")
 	check_dir(asset_dir)
@@ -90,18 +90,16 @@ def extract_images(output_dir, doc, season, scenario):
 		
 		for img_index, img_info in enumerate(image_list):
 			xref = img_info[0]
+			
 			base_image = doc.extract_image(xref)
 			
 			image_bytes = base_image["image"]
 			image_ext = base_image["ext"]
 			
-			file_path = os.path.join(img_dir, f"extracted_image_page{page_num+1}_img{img_index+1}.{image_ext}")
+			file_path = os.path.join(img_dir, f"{xref}.{image_ext}")
 			
-			#if (page_num + 1, img_index + 1) in images_needed[season][scenario]:
 			with open(file_path, "wb") as img_file:
 				img_file.write(image_bytes)
-			#else:
-			#	pass
 
 
 def extract_text(output_dir, doc):
