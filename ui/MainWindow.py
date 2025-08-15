@@ -44,7 +44,7 @@ def main_menu_column(directories) -> sg.Column:
 	
 	for root, _, files in os.walk(directories["Modules"]):
 		for file in files:
-			if file.endswith(".txt"):
+			if file.endswith(".json"):
 				new_scenario_button_visible = True
 	
 	for root, _, files in os.walk(directories["Saves"]):

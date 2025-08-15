@@ -1,14 +1,41 @@
-def implemented_scenarios(season = None, scenario = None) -> dict:
+def implemented_scenarios() -> dict:
 	implemented = {
-		"Bounties": {},
-		"Quests": {},
-		"Season 1": {},
-		"Season 2": {},
-		"Season 3": {},
-		"Season 4": {},
-		"Season 5": {},
-		"Season 6": {},
-		"Season 7": {}
+		"Bounties": {
+			"Available": False,
+			"Scenarios": []
+		},
+		"Quests": {
+			"Available": False,
+			"Scenarios": []
+		},
+		"Season 1": {
+			"Available": True,
+			"Scenarios": [7]
+		},
+		"Season 2": {
+			"Available": False,
+			"Scenarios": []
+		},
+		"Season 3": {
+			"Available": False,
+			"Scenarios": []
+		},
+		"Season 4": {
+			"Available": False,
+			"Scenarios": []
+		},
+		"Season 5": {
+			"Available": False,
+			"Scenarios": []
+		},
+		"Season 6": {
+			"Available": False,
+			"Scenarios": []
+		},
+		"Season 7": {
+			"Available": False,
+			"Scenarios": []
+		}
 	}
 	
 	return implemented

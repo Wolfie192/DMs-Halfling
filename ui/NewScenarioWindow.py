@@ -1,63 +1,10 @@
-import os
 import FreeSimpleGUI as sg
 
 import tools.ModuleManager as mm
 
 
-def get_scenarios_data(directories) -> dict:
-	available_scenarios: dict = {
-		"Bounties": {
-			"Available": False,
-			"Scenarios": []
-		},
-		"Quests": {
-			"Available": False,
-			"Scenarios": []
-		},
-		"Season 1": {
-			"Available": False,
-			"Scenarios": []
-		},
-		"Season 2": {
-			"Available": False,
-			"Scenarios": []
-		},
-		"Season 3": {
-			"Available": False,
-			"Scenarios": []
-		},
-		"Season 4": {
-			"Available": False,
-			"Scenarios": []
-		},
-		"Season 5": {
-			"Available": False,
-			"Scenarios": []
-		},
-		"Season 6": {
-			"Available": False,
-			"Scenarios": []
-		},
-		"Season 7": {
-			"Available": False,
-			"Scenarios": []
-		}
-	}
-	
-	for root, _, files in os.walk(directories["Modules"]):
-		for file in files:
-			if file.endswith(".txt"):
-				file_path = os.path.join(root, file)
-				dir_name: str = os.path.splitext(file_path)[0].split("\\")[-3]
-				file_name: str = os.path.splitext(file_path)[0].split("\\")[-2]
-				available_scenarios[dir_name]["Available"] = True
-				available_scenarios[dir_name]["Scenarios"].append(file_name.split(" ")[-1])
-	
-	return available_scenarios
-
-				
 def build(directories):
-	available_scenarios = get_scenarios_data(directories)
+	available_scenarios = mm.implemented_scenarios()
 	sg.theme("DarkGrey")
 	
 	window_layout = [
@@ -103,7 +50,6 @@ def main_loop(window, available_scenarios, directories):
 			selected_scenario = event.split(" ")[0]
 			break
 			
-	mm.setup_module(selected_season, selected_scenario, directories)
 	window.close()
 			
 				
@@ -111,12 +57,11 @@ def main_loop(window, available_scenarios, directories):
 	window.close()
 
 def select_season_column(available_scenarios) -> sg.Column:
-	implemented_scenarios: dict = mm.implemented_scenarios()
 	layout = []
 	
 	for key, _ in available_scenarios.items():
 		if available_scenarios[key]["Available"]:
-			if len(implemented_scenarios[key]) >= 1:
+			if available_scenarios[key]["Available"]:
 				button = sg.Button(f"{key}", key = f"{key} Season Button", expand_x = True, expand_y = True)
 			else:
 				button = sg.Button(f"{key}", key = f"{key} Season Button", expand_x = True, expand_y = True, disabled = True)
@@ -141,11 +86,10 @@ def select_scenario_column() -> sg.Column:
 
 
 def update_scenario_column(selected_season, window, available_scenarios):
-	implemented_scenarios: dict = mm.implemented_scenarios()
 	button_list = []
 	available_scenarios[selected_season]["Scenarios"].sort(key = int)
 	for item in available_scenarios[selected_season]["Scenarios"]:
-		if item in implemented_scenarios[selected_season]:
+		if item in available_scenarios[selected_season]["Scenarios"]:
 			button = sg.Button(f"{item}", key = f"{item} Scenario Button", expand_x = True, expand_y = True)
 		else:
 			button = sg.Button(f"{item}", key = f"{item} Scenario Button", expand_x = True, expand_y = True, disabled = True)
@@ -163,7 +107,4 @@ def update_scenario_column(selected_season, window, available_scenarios):
 
 
 if __name__ == "__main__":
-	bin_dir = os.path.abspath("../bin")
-	module_dir = os.path.join(bin_dir, "Modules")
-	
-	get_scenarios_data({"Modules": module_dir})
+	pass

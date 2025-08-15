@@ -1,3 +1,4 @@
+import json
 import os
 import pymupdf
 
@@ -103,13 +104,12 @@ def extract_images(output_dir, doc, season, scenario):
 
 
 def extract_text(output_dir, doc):
-	output_file = os.path.join(output_dir, "extracted_text.txt")
+	output_file = os.path.join(output_dir, "extracted_text.json")
 	
-	with open(output_file, "ab") as text_file:
+	with open(output_file, "a") as text_file:
 		for page in doc:
-			text = page.get_text().encode("utf-8")
-			text_file.write(text)
-			text_file.write(bytes((12, )))
+			text = page.get_text("dict", flags = pymupdf.TEXTFLAGS_DICT & ~pymupdf.TEXT_PRESERVE_IMAGES)
+			json.dump(text, text_file, indent = 2)
 
 
 if __name__ == "__main__":
