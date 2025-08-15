@@ -62,13 +62,15 @@ def extract_file(directories, file_path) -> str:
 	
 	try:
 		int(tier.split("-")[0])
-		output_dir = os.path.join(season_dir, scenario_out + f"({tier})")
+		scenario_dir = os.path.join(season_dir, scenario_out + f"({tier})")
 	except ValueError:
-		output_dir = os.path.join(season_dir, scenario_out)
+		scenario_dir = os.path.join(season_dir, scenario_out)
+	check_dir(scenario_dir)
+	output_dir = os.path.join(scenario_dir, "Pages")
 	check_dir(output_dir)
 	
 	#print(f"Extracting images from ({season}, {scenario})")
-	extract_images(output_dir, doc, season_out, scenario)
+	extract_images(scenario_dir, doc, season_out, scenario)
 	#print(f"Extracting text from ({season}, {scenario})")
 	# noinspection PyTypeChecker
 	extract_text(output_dir, doc)
@@ -77,8 +79,6 @@ def extract_file(directories, file_path) -> str:
 
 
 def extract_images(output_dir, doc, season, scenario):
-	image_list = mm.implemented_scenarios(season = season, scenario = scenario)
-	
 	asset_dir = os.path.join(output_dir, "Assets")
 	check_dir(asset_dir)
 	
@@ -104,12 +104,34 @@ def extract_images(output_dir, doc, season, scenario):
 
 
 def extract_text(output_dir, doc):
-	output_file = os.path.join(output_dir, "extracted_text.json")
+	for page_index in range(len(doc)):
+		page = doc[page_index]
+		text = page.get_text("dict", flags = pymupdf.TEXTFLAGS_DICT & ~pymupdf.TEXT_PRESERVE_IMAGES)
+		
+		text.pop("width")
+		text.pop("height")
+		
+		for block in text["blocks"]:
+			block.pop("bbox")
+			block.pop("type")
+			block.pop("number")
+			
+			for line in block["lines"]:
+				line.pop("wmode")
+				line.pop("dir")
+				line.pop("bbox")
+				
+				for span in line["spans"]:
+					span.pop("flags")
+					span.pop("bidi")
+					span.pop("char_flags")
+					span.pop("ascender")
+					span.pop("descender")
+					span.pop("origin")
+					span.pop("bbox")
 	
-	with open(output_file, "a") as text_file:
-		for page in doc:
-			text = page.get_text("dict", flags = pymupdf.TEXTFLAGS_DICT & ~pymupdf.TEXT_PRESERVE_IMAGES)
-			json.dump(text, text_file, indent = 2)
+		with open(os.path.join(output_dir, f"page {page_index}.json"), "a") as file:
+			json.dump(text, file, indent = 2)
 
 
 if __name__ == "__main__":
