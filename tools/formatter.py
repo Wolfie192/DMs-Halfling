@@ -1,3 +1,6 @@
+import json
+import os
+
 import FreeSimpleGUI as sg
 
 
@@ -15,3 +18,45 @@ class Paragraph:
 		paragraph = sg.Text(self.text)
 		
 		return paragraph
+
+
+if __name__ == "__main__":
+	bin_dir = os.path.abspath("../bin")
+	modules_dir = os.path.join(bin_dir, "Modules")
+	season_dir = os.path.join(modules_dir, "Season 1")
+	scenario_dir = os.path.join(season_dir, "Scenario 7")
+	pages_dir = os.path.join(scenario_dir, "Pages")
+	file_path = os.path.join(pages_dir, "page 0.json")
+	page_list: list = []
+	line_dict: dict = {f"Page.Block.Line.Span": {
+		"size": "float",
+		"font": "string",
+		"color": "int",
+		"alpha": "int",
+		"text": "string"
+	}}
+
+	for root, _, files in os.walk(pages_dir):
+		for file in files:
+			file_path = os.path.join(root, file)
+			
+			with open(file_path, "r") as file:
+				data = json.load(file)
+			
+			page_list.append(data)
+	
+	for page_index, page in enumerate(page_list):
+		for block_index, block in enumerate(page["blocks"]):
+			for line_index, line in enumerate(block["lines"]):
+				for span_index, span in enumerate(line["spans"]):
+					line_dict[f"{page_index}.{block_index}.{line_index}.{span_index}"] = {
+						"size": span["size"],
+						"font": span["font"],
+						"color": span["color"],
+						"alpha": span["alpha"],
+						"text": span["text"]
+					}
+	
+	print(json.dumps(line_dict, indent = 2))
+					
+					

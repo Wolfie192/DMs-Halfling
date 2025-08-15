@@ -77,8 +77,6 @@ def extract_file(directories, file_path) -> str:
 
 
 def extract_images(output_dir, doc, season, scenario):
-	image_list = mm.implemented_scenarios(season = season, scenario = scenario)
-	
 	asset_dir = os.path.join(output_dir, "Assets")
 	check_dir(asset_dir)
 	
@@ -104,12 +102,53 @@ def extract_images(output_dir, doc, season, scenario):
 
 
 def extract_text(output_dir, doc):
-	output_file = os.path.join(output_dir, "extracted_text.json")
+	page_list: list = []
 	
-	with open(output_file, "a") as text_file:
-		for page in doc:
-			text = page.get_text("dict", flags = pymupdf.TEXTFLAGS_DICT & ~pymupdf.TEXT_PRESERVE_IMAGES)
-			json.dump(text, text_file, indent = 2)
+	line_dict: dict = {f"Page.Block.Line.Span": {
+		"size": "float",
+		"font": "string",
+		"color": "int",
+		"alpha": "int",
+		"text": "string"
+	}}
+	
+	for page_index in range(len(doc)):
+		
+		page = doc[page_index]
+		text = page.get_text("dict", flags = pymupdf.TEXTFLAGS_DICT & ~pymupdf.TEXT_PRESERVE_IMAGES)
+		
+		text.pop("width")
+		text.pop("height")
+		
+		for block_index, block in enumerate(text["blocks"]):
+			block.pop("bbox")
+			block.pop("type")
+			block.pop("number")
+			
+			for line_index, line in enumerate(block["lines"]):
+				line.pop("wmode")
+				line.pop("dir")
+				line.pop("bbox")
+				
+				for span_index, span in enumerate(line["spans"]):
+					span.pop("flags")
+					span.pop("bidi")
+					span.pop("char_flags")
+					span.pop("ascender")
+					span.pop("descender")
+					span.pop("origin")
+					span.pop("bbox")
+					
+					line_dict[f"{page_index}.{block_index}.{line_index}.{span_index}"] = {
+						"size": span["size"],
+						"font": span["font"],
+						"color": span["color"],
+						"alpha": span["alpha"],
+						"text": span["text"]
+					}
+		
+	with open(os.path.join(output_dir, f"output.json"), "w") as file:
+		json.dump(line_dict, file, indent = 2)
 
 
 if __name__ == "__main__":
