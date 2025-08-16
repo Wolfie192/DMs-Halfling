@@ -1,6 +1,7 @@
 import FreeSimpleGUI as sg
 
 import tools.ModuleManager as mm
+import ui.ModuleWindow
 
 
 def build(directories):
@@ -51,6 +52,7 @@ def main_loop(window, available_scenarios, directories):
 			break
 			
 	window.close()
+	ui.ModuleWindow.build(selected_season, selected_scenario)
 			
 				
 

@@ -5,19 +5,26 @@ import FreeSimpleGUI as sg
 
 
 class Paragraph:
-	def __init__(self, line_list: list[str], size: float, color: int, font: str):
-		self.text: str = ""
-		self.size: float = size
-		self.color: int = color
-		self.font: str = font
+	def __init__(self, file_path, line_list: list):
+		self.file_path = file_path
+		self.text = ""
+		
+		with open(self.file_path, "r") as file:
+			self.data = json.load(file)
 		
 		for line in line_list:
-			self.text += line
+			if isinstance(line, tuple):
+				p = line[0].split(".")[0]
+				b = line[0].split(".")[1]
+				i = int(line[0].split(".")[2])
+				while str(i) <= line[1].split(".")[2]:
+					self.text += data[f"{p}.{b}.{str(i)}"]["text"]
+					i += 1
+			else:
+				self.text += line["text"]
 	
 	def compose(self) -> sg.Text:
-		paragraph = sg.Text(self.text)
-		
-		return paragraph
+		return sg.Text(self.text)
 
 
 if __name__ == "__main__":
@@ -25,38 +32,11 @@ if __name__ == "__main__":
 	modules_dir = os.path.join(bin_dir, "Modules")
 	season_dir = os.path.join(modules_dir, "Season 1")
 	scenario_dir = os.path.join(season_dir, "Scenario 7")
-	pages_dir = os.path.join(scenario_dir, "Pages")
-	file_path = os.path.join(pages_dir, "page 0.json")
-	page_list: list = []
-	line_dict: dict = {f"Page.Block.Line.Span": {
-		"size": "float",
-		"font": "string",
-		"color": "int",
-		"alpha": "int",
-		"text": "string"
-	}}
-
-	for root, _, files in os.walk(pages_dir):
-		for file in files:
-			file_path = os.path.join(root, file)
-			
-			with open(file_path, "r") as file:
-				data = json.load(file)
-			
-			page_list.append(data)
+	file_path = os.path.join(scenario_dir, "output.json")
 	
-	for page_index, page in enumerate(page_list):
-		for block_index, block in enumerate(page["blocks"]):
-			for line_index, line in enumerate(block["lines"]):
-				for span_index, span in enumerate(line["spans"]):
-					line_dict[f"{page_index}.{block_index}.{line_index}.{span_index}"] = {
-						"size": span["size"],
-						"font": span["font"],
-						"color": span["color"],
-						"alpha": span["alpha"],
-						"text": span["text"]
-					}
+	with open(file_path, "r") as file:
+		data = json.load(file)
 	
-	print(json.dumps(line_dict, indent = 2))
-					
-					
+	paragraph = Paragraph(file_path, [("2.12.1", "2.12.8")])
+	
+	print(paragraph.text)

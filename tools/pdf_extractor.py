@@ -104,7 +104,7 @@ def extract_images(output_dir, doc, season, scenario):
 def extract_text(output_dir, doc):
 	page_list: list = []
 	
-	line_dict: dict = {f"Page.Block.Line.Span": {
+	line_dict: dict = {f"Page.Block.Line": {
 		"size": "float",
 		"font": "string",
 		"color": "int",
@@ -139,7 +139,7 @@ def extract_text(output_dir, doc):
 					span.pop("origin")
 					span.pop("bbox")
 					
-					line_dict[f"{page_index}.{block_index}.{line_index}.{span_index}"] = {
+					line_dict[f"{page_index}.{block_index}.{line_index}"] = {
 						"size": span["size"],
 						"font": span["font"],
 						"color": span["color"],
