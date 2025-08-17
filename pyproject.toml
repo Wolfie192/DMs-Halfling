@@ -1,0 +1,10 @@
+[project]
+name = "dms-halfling"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    'FreeSimpleGUI>=5.2.0.post1',
+    'pymupdf>=1.26.3',
+]
