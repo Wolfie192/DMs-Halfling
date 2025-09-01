@@ -2,6 +2,7 @@ import json
 import os
 import pymupdf
 import src.console.console as console
+import src.pdf_importer.images as images
 
 
 def run(directory: dict):
@@ -24,10 +25,7 @@ def run(directory: dict):
 				
 				doc = pymupdf.open(file_path)
 				
-				try:
-					tier: str = str(doc.metadata["title"].replace(").pdf", "").replace("(", "").split(" ")[-1])
-				except ValueError:
-					tier = None
+				tier: str = str(doc.metadata["title"].replace(").pdf", "").replace("(", "").split(" ")[-1])
 				
 				try:
 					if int(doc.metadata["title"][6:8]) == 60 or int(doc.metadata["title"][6:8]) == 61:
@@ -50,6 +48,11 @@ def run(directory: dict):
 					current_file += 1
 					continue
 				
+				try:
+					int(tier.split("-")[0])
+				except ValueError:
+					tier = None
+				
 				season_dir = os.path.join(directory["modules"], f"{season}")
 				if not os.path.exists(season_dir):
 					os.mkdir(season_dir)
@@ -63,7 +66,7 @@ def run(directory: dict):
 					os.mkdir(scenario_dir)
 				
 				_extract_text(doc, scenario_dir)
-				_extract_images(doc, scenario_dir)
+				_extract_images(doc, scenario_dir, season, scenario)
 				doc.close()
 				os.remove(file_path)
 				
@@ -158,7 +161,7 @@ def _extract_text(doc, scenario_dir):
 		json.dump(line_dict, file, indent = 2)
 
 
-def _extract_images(doc, scenario_dir):
+def _extract_images(doc, scenario_dir, season, scenario):
 	image_dir = os.path.join(scenario_dir, "Images")
 	
 	if not os.path.exists(image_dir):
@@ -170,6 +173,9 @@ def _extract_images(doc, scenario_dir):
 		
 		for img_index, img_info in enumerate(image_list):
 			xref = img_info[0]
+			
+			if not xref in images.keep_list[season][scenario]:
+				continue
 			
 			base_image = doc.extract_image(xref)
 			
