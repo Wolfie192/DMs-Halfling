@@ -152,7 +152,7 @@ def _extract_text(doc, scenario_dir):
 					line_dict[f"{page_index}.{block_index}.{line_index}.{span_index}"] = {
 						"size": span["size"],
 						"font": span["font"],
-						"color": span["color"],
+						"color": hex(span["color"]).replace("0x", "").upper(),
 						"alpha": span["alpha"],
 						"text": span["text"]
 					}
@@ -174,8 +174,11 @@ def _extract_images(doc, scenario_dir, season, scenario):
 		for img_index, img_info in enumerate(image_list):
 			xref = img_info[0]
 			
-			if not xref in images.keep_list[season][scenario]:
-				continue
+			try:
+				if not xref in images.keep_list[season][scenario]:
+					continue
+			except KeyError:
+				pass
 			
 			base_image = doc.extract_image(xref)
 			
