@@ -2,11 +2,13 @@
 
 A tool to help with running Pathfinder 2e Society Games, including Bounties, Quests, and Season scenarios. Multi-Import available to import multiple PDFs at a time, but requires signed PDFs with Paizo's header information intact to function.
 
+Currently, in early development and runs and outputs directly to the terminal. Future development plans to include a gui if the tool gains any traction and additional development support.
+
 # Development
 
 ## Pre-requisite
 
-* python 3.13 built with Tkinter enabled
+* Python 3.13
 
 ## Setup
 
