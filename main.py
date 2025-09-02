@@ -1,12 +1,13 @@
 import os
 import src.pdf_importer.cui.main_menu as pdf_importer
+import src.scenario_runner.cui.select_season as select_season
 from src.console import console
 
 
 def main():
-	bin_dir = check_dir("bin")
-	src_dir = check_dir("src")
-	import_dir = check_dir("Import")
+	bin_dir = _check_dir("bin")
+	src_dir = _check_dir("src")
+	import_dir = _check_dir("Import")
 	
 	modules_dir = os.path.join(bin_dir, "modules")
 	if not os.path.exists(modules_dir):
@@ -19,20 +20,21 @@ def main():
 		"modules": modules_dir
 	}
 	
-	display()
-	main_loop(directory)
+	_display()
+	_main_loop(directory)
 	
 
-def display(exception: Exception = None):
+def _display(exception: Exception = None):
 	console.clear()
 	print("Dm's Halfling, Pathfinder 2e Society Assistant\n\n")
 	
-	print("[I]mport PDFs\n\n")
+	print("[I]mport PDFs")
+	print("[S]tart New Scenario\n\n")
 
 	print("[Q]uit\n\n")
 
 
-def main_loop(directory: dict):
+def _main_loop(directory: dict):
 	while(True):
 		user_input = input("> ").lower()
 		
@@ -42,13 +44,16 @@ def main_loop(directory: dict):
 				console.close()
 			case "import"|"i"|"import pdfs":
 				pdf_importer.run(directory)
-				display()
+				_display()
+			case "s"|"start"|"start new"|"start new scenario"|"new"|"scenario":
+				select_season.run(directory)
+				_display()
 			case _:
 				exception = Exception("Invalid Input.")
-				display(exception)
+				_display(exception)
 
 
-def check_dir(dir_name):
+def _check_dir(dir_name):
 	if os.path.exists(f"./{dir_name}"):
 		dir_path = os.path.abspath(f"./{dir_name}")
 	elif os.path.exists(f"../{dir_name}"):

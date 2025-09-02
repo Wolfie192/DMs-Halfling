@@ -1,5 +1,6 @@
 import os
 import sys
+import shutil
 
 def clear():
 	if os.name == "nt":
@@ -10,3 +11,10 @@ def clear():
 
 def close():
 	sys.exit()
+
+
+def width() -> int:
+	return shutil.get_terminal_size().columns
+
+def height() -> int:
+	return shutil.get_terminal_size().lines

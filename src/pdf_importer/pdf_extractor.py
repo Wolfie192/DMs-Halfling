@@ -3,6 +3,7 @@ import os
 import pymupdf
 import src.console.console as console
 import src.pdf_importer.images as images
+import src.pdf_importer.format_text as format_text
 
 
 def run(directory: dict):
@@ -152,13 +153,12 @@ def _extract_text(doc, scenario_dir):
 					line_dict[f"{page_index}.{block_index}.{line_index}.{span_index}"] = {
 						"size": span["size"],
 						"font": span["font"],
-						"color": span["color"],
+						"color": hex(span["color"])[2:],
 						"alpha": span["alpha"],
 						"text": span["text"]
 					}
 	
-	with open(output_file, "w") as file:
-		json.dump(line_dict, file, indent = 2)
+	format_text.formatter(line_dict, scenario_dir)
 
 
 def _extract_images(doc, scenario_dir, season, scenario):
