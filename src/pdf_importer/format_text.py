@@ -46,19 +46,32 @@ def _season_1_scenario_7_formatter(line_dict) -> Scenario:
 	module.author = line_dict["1.22.1.0"]["text"]
 	module.scenario_tags = [line_dict["1.10.0.0"]["text"]]
 	
+	#? This is temporary and just to help with creating the formatter for the module.
+	console.clear()
+	
 	page_1 = Page()
 
 	where_on_golarion = Section(header = line_dict["2.17.0.0"])
-	paragraph_1 = Paragraph()
-	paragraph_1.add_text(line_dict["2.16.0.0"], line_dict["2.16.0.1"], line_dict["2.16.1.0"], line_dict["2.16.2.0"], line_dict["2.16.3.0"], line_dict["2.16.4.0"], line_dict["2.16.5.0"], line_dict["2.16.5.1"], line_dict["2.16.5.2"], line_dict["2.16.6.0"], line_dict["2.16.7.0"], line_dict["2.16.7.1"], line_dict["2.16.7.2"])
-	where_on_golarion.add(paragraph_1)
+	where_on_golarion_paragraph = Paragraph()
+	where_on_golarion_paragraph.add_text(line_dict["2.16.0.0"], line_dict["2.16.0.1"], line_dict["2.16.1.0"], line_dict["2.16.2.0"], line_dict["2.16.3.0"], line_dict["2.16.4.0"], line_dict["2.16.5.0"], line_dict["2.16.5.1"], line_dict["2.16.5.2"], line_dict["2.16.6.0"], line_dict["2.16.7.0"], line_dict["2.16.7.1"], line_dict["2.16.7.2"])
+	where_on_golarion.add(where_on_golarion_paragraph)
 	page_1.add(where_on_golarion)
 	
+	page_1.add(LineBreak(rows = 3))
+	
 	gm_synopsis = Section()
-	paragraph_2 = Paragraph()
-	paragraph_2.add_text(line_dict["2.11.0.0"], line_dict["2.11.0.1"], line_dict["2.11.1.0"], line_dict["2.11.2.0"])
-	gm_synopsis.add(paragraph_2)
+	gm_synopsis_paragraph = Paragraph(first_line_indent = False)
+	gm_synopsis_paragraph.add_text(line_dict["2.11.0.0"], line_dict["2.11.0.1"], line_dict["2.11.1.0"], line_dict["2.11.2.0"])
+	gm_synopsis.add(gm_synopsis_paragraph)
 	page_1.add(gm_synopsis)
+	
+	page_1.add(LineBreak(rows = 1))
+	
+	adventure_background = Section(header = line_dict["2.12.0.0"])
+	adventure_background_paragraph_1 = Paragraph()
+	adventure_background_paragraph_1.add_text(line_dict["2.12.1.0"], line_dict["2.12.2.0"], line_dict["2.12.3.0"], line_dict["2.12.4.0"], line_dict["2.12.5.0"], line_dict["2.12.6.0"], line_dict["2.12.7.0"], line_dict["2.12.8.0"])
+	adventure_background.add(adventure_background_paragraph_1)
+	page_1.add(adventure_background)
 	
 	page_1.display()
 

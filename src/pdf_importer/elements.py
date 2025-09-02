@@ -1,26 +1,39 @@
 from src.console import console
 
 
+class LineBreak:
+	def __init__(self, rows: int = 1, style = None):
+		self.style = style
+		self.rows = rows
+		pass
+	
+	def display(self):
+		for i in range(self.rows):
+			print()
+
+
 class Paragraph:
-	def __init__(self):
-		self.text = None
+	def __init__(self, first_line_indent: bool = True):
+		self.first_line_indent: bool = first_line_indent
+		self.text: str = ""
 	
 	def add_text(self, *lines):
 		for line in lines:
-			if self.text is None:
-				self.text = line["text"]
-			else:
-				self.text += line["text"]
+			self.text += line["text"]
 	
-	def display(self):
+	def display(self, top_element: bool = False):
 		width = console.width()
-		output_str: str = ""
+			
+		if self.first_line_indent:
+			output_str: str = "     "
+		else:
+			output_str: str = ""
 		
 		words = self.text.split(" ")
 		
 		for word in words:
 			if word == words[0]:
-				new_output_str = "     " + word
+				new_output_str = output_str + word
 			else:
 				new_output_str = output_str + " " + word
 			
