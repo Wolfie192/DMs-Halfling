@@ -2,9 +2,9 @@ import src.console.console as console
 import src.pdf_importer.pdf_extractor as pdf_extractor
 
 
-def run(directory: dict):
+def run():
 	_display()
-	_main_loop(directory)
+	_main_loop()
 
 
 def _display():
@@ -19,8 +19,8 @@ def _display():
 	print("[B]ack | [Q]uit\n\n")
 
 
-def _main_loop(directory: dict):
-	while(True):
+def _main_loop():
+	while True:
 		user_input = input("> ").lower()
 		
 		match user_input:
@@ -30,7 +30,7 @@ def _main_loop(directory: dict):
 			case "b"|"back":
 				break
 			case "s"|"start":
-				pdf_extractor.run(directory)
+				pdf_extractor.run()
 				_display()
 			case _:
 				_display()

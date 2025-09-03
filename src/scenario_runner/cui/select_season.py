@@ -1,29 +1,34 @@
 from src.scenario_runner.cui import select_scenario
 from src.console import console
 import os
+from src.configs.directory import DIRECTORY
 
 
-def run(directory):
-	available_season_list: list[str] = []
+def available_season_list() -> list:
+	season_list: list = []
 	
-	for root, dirs, files in os.walk(directory["modules"]):
-		for dir in dirs:
-			if dir == "Bounties":
-				available_season_list += [dir]
-			elif dir == "Quests":
-				available_season_list += [dir]
-			elif dir.startswith("Season"):
-				available_season_list += [dir]
-		
-	_display(available_season_list)
-	_main_loop(directory, available_season_list)
+	for root, folders, files in os.walk(DIRECTORY["modules"]):
+		for folder in folders:
+			if folder == "Bounties":
+				season_list += [folder]
+			elif folder == "Quests":
+				season_list += [folder]
+			elif folder.startswith("Season"):
+				season_list += [folder]
+	
+	return season_list
 
 
-def _display(available_season_list: list[str] = None):
+def run():
+	_display()
+	_main_loop()
+
+
+def _display():
 	console.clear()
 	print("DM's Halfling - Select Season\n\n")
 	
-	for season in available_season_list:
+	for season in available_season_list():
 		if not season.startswith("Season"):
 			season = f"[{season[0:2]}]{season[2:]}"
 		else:
@@ -35,8 +40,8 @@ def _display(available_season_list: list[str] = None):
 	print("[B]ack | [Q]uit\n\n")
 
 
-def _main_loop(directory, available_season_list: list[str] = None):
-	while(True):
+def _main_loop():
+	while True:
 		user_input = input("> ").lower()
 		
 		match user_input:
@@ -46,36 +51,36 @@ def _main_loop(directory, available_season_list: list[str] = None):
 			case "b"|"back":
 				break
 			case "bo"|"bounties":
-				directory["selected season"] = os.path.join(directory["modules"], "Bounties")
-				select_scenario.run(directory)
-				_display(available_season_list)
+				DIRECTORY["selected season"] = os.path.join(DIRECTORY["modules"], "Bounties")
+				select_scenario.run()
+				_display()
 			case "qu"|"quests":
-				directory["selected season"] = os.path.join(directory["modules"], "Quests")
-				select_scenario.run(directory)
-				_display(available_season_list)
+				DIRECTORY["selected season"] = os.path.join(DIRECTORY["modules"], "Quests")
+				select_scenario.run()
+				_display()
 			case "1"|"season 1":
-				directory["selected season"] = os.path.join(directory["modules"], "Season 1")
-				select_scenario.run(directory)
-				_display(available_season_list)
+				DIRECTORY["selected season"] = os.path.join(DIRECTORY["modules"], "Season 1")
+				select_scenario.run()
+				_display()
 			case "2"|"season 2":
-				directory["selected season"] = os.path.join(directory["modules"], "Season 2")
-				select_scenario.run(directory)
-				_display(available_season_list)
+				DIRECTORY["selected season"] = os.path.join(DIRECTORY["modules"], "Season 2")
+				select_scenario.run()
+				_display()
 			case "3"|"season 3":
-				directory["selected season"] = os.path.join(directory["modules"], "Season 3")
-				select_scenario.run(directory)
-				_display(available_season_list)
+				DIRECTORY["selected season"] = os.path.join(DIRECTORY["modules"], "Season 3")
+				select_scenario.run()
+				_display()
 			case "4"|"season 4":
-				directory["selected season"] = os.path.join(directory["modules"], "Season 4")
-				select_scenario.run(directory)
-				_display(available_season_list)
+				DIRECTORY["selected season"] = os.path.join(DIRECTORY["modules"], "Season 4")
+				select_scenario.run()
+				_display()
 			case "5"|"season 5":
-				directory["selected season"] = os.path.join(directory["modules"], "Season 5")
-				select_scenario.run(directory)
-				_display(available_season_list)
+				DIRECTORY["selected season"] = os.path.join(DIRECTORY["modules"], "Season 5")
+				select_scenario.run()
+				_display()
 			case "6"|"season 6":
-				directory["selected season"] = os.path.join(directory["modules"], "Season 6")
-				select_scenario.run(directory)
-				_display(available_season_list)
+				DIRECTORY["selected season"] = os.path.join(DIRECTORY["modules"], "Season 6")
+				select_scenario.run()
+				_display()
 			case _:
-				_display(available_season_list)
+				_display()

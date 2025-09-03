@@ -1,7 +1,8 @@
-import os
+import os 
 import src.pdf_importer.cui.main_menu as pdf_importer
 import src.scenario_runner.cui.select_season as select_season
 from src.console import console
+from src.configs.directory import DIRECTORY
 
 
 def main():
@@ -13,18 +14,19 @@ def main():
 	if not os.path.exists(modules_dir):
 		os.mkdir(modules_dir)
 	
-	directory: dict = {
-		"bin": bin_dir,
-		"src": src_dir,
-		"import": import_dir,
-		"modules": modules_dir
-	}
+	configs_dir = os.path.join(src_dir, "configs")
+	
+	DIRECTORY["bin"] = bin_dir
+	DIRECTORY["src"] = src_dir
+	DIRECTORY["import"] = import_dir
+	DIRECTORY["modules"] = modules_dir
+	DIRECTORY["configs"] = configs_dir
 	
 	_display()
-	_main_loop(directory)
+	_main_loop()
 	
 
-def _display(exception: Exception = None):
+def _display():
 	console.clear()
 	print("Dm's Halfling, Pathfinder 2e Society Assistant\n\n")
 	
@@ -34,8 +36,8 @@ def _display(exception: Exception = None):
 	print("[Q]uit\n\n")
 
 
-def _main_loop(directory: dict):
-	while(True):
+def _main_loop():
+	while True:
 		user_input = input("> ").lower()
 		
 		match user_input:
@@ -43,14 +45,13 @@ def _main_loop(directory: dict):
 				console.clear()
 				console.close()
 			case "import"|"i"|"import pdfs":
-				pdf_importer.run(directory)
+				pdf_importer.run()
 				_display()
 			case "s"|"start"|"start new"|"start new scenario"|"new"|"scenario":
-				select_season.run(directory)
+				select_season.run()
 				_display()
 			case _:
-				exception = Exception("Invalid Input.")
-				_display(exception)
+				_display()
 
 
 def _check_dir(dir_name):

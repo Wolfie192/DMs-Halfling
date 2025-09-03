@@ -3,13 +3,13 @@ import os
 import pymupdf
 import src.console.console as console
 import src.pdf_importer.images as images
-import src.pdf_importer.format_text as format_text
+from src.configs.directory import DIRECTORY
 
 
-def run(directory: dict):
+def run():
 	file_errors: list = []
 	
-	for root, dirs, files in os.walk(directory["import"]):
+	for root, dirs, files in os.walk(DIRECTORY["import"]):
 		number_of_files = int(len(files))
 		print(number_of_files)
 		current_file = 1
@@ -54,7 +54,7 @@ def run(directory: dict):
 				except ValueError:
 					tier = None
 				
-				season_dir = os.path.join(directory["modules"], f"{season}")
+				season_dir = os.path.join(DIRECTORY["modules"], f"{season}")
 				if not os.path.exists(season_dir):
 					os.mkdir(season_dir)
 				
@@ -108,7 +108,7 @@ def display(progress, errors):
 	
 	
 def main_loop():
-	while(True):
+	while True:
 		user_input = input("> ").lower()
 		
 		match user_input:
@@ -158,7 +158,8 @@ def _extract_text(doc, scenario_dir):
 						"text": span["text"]
 					}
 	
-	format_text.formatter(line_dict, scenario_dir)
+	with open(output_file, "w") as f:
+		json.dump(line_dict, f, indent=2)
 
 
 def _extract_images(doc, scenario_dir, season, scenario):
