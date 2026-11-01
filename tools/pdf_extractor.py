@@ -2,7 +2,7 @@ import json
 import os
 import pymupdf
 
-import tools.ModuleManager as mm
+from tools.scenario_title import parse_scenario_title
 
 
 def check_dir(dir_path):
@@ -12,68 +12,32 @@ def check_dir(dir_path):
 
 def extract_file(directories, file_path) -> str:
 	doc = pymupdf.open(file_path)
-	
-	if doc.metadata["title"] == "":
-		error = "Only official Paizo PDFs are accepted."
-		return error
-	
 	try:
-		tier: str = str(doc.metadata["title"].replace(").pdf", "").split(" ")[-1])
-	except ValueError:
-		print(f"Error, invalid value, {doc.metadata["title"][13:16]} received")
-		
-	try:	
-		if doc.metadata["title"][6:8] == "60" or doc.metadata["title"][6:8] == "61":
-			season_str: str = doc.metadata["title"][5:7]
-			scenario_str: str = doc.metadata["title"][7:9]
-		elif doc.metadata["title"][5:8] == "Q00":
-			season_str: str = "0"
-			scenario_str: str = doc.metadata["title"][8:10]
-		elif doc.metadata["title"][5:7] == "Q0":
-			season_str: str = "0"
-			scenario_str: str = doc.metadata["title"][7:9]
-		elif doc.metadata["title"][5] == "B":
-			season_str: str = "99"
-			scenario_str: str = doc.metadata["title"][8:10].replace("E", "")
-		else:
-			season_str: str = doc.metadata["title"][6:8]
-			scenario_str: str = doc.metadata["title"][8:10]
-		
-		season: int = int(season_str)
-		scenario: int = int(scenario_str)
-	except ValueError:
-		print(f"Error, invalid value, ({season_str}, {scenario_str}) received")
+		title = (doc.metadata or {}).get("title")
+		if not title:
+			return "Only official Paizo PDFs are accepted."
 
-	match season:
-		case 0:
-			season_out = "Quests"
-			scenario_out = f"Quest {scenario}"
-		case 99:
-			season_out = "Bounties"
-			scenario_out = f"Bounty {scenario}"
-		case _:
-			season_out = f"Season {season}"
-			scenario_out = f"Scenario {scenario}"
-	
-	print(season_out, scenario)
-	
-	season_dir = os.path.join(directories["Modules"], season_out)
-	check_dir(season_dir)
-	
-	try:
-		int(tier.split("-")[0])
-		output_dir = os.path.join(season_dir, scenario_out + f"({tier})")
-	except ValueError:
-		output_dir = os.path.join(season_dir, scenario_out)
-	check_dir(output_dir)
-	
-	#print(f"Extracting images from ({season}, {scenario})")
-	extract_images(output_dir, doc, season_out, scenario)
-	#print(f"Extracting text from ({season}, {scenario})")
-	# noinspection PyTypeChecker
-	extract_text(output_dir, doc)
-	
-	return ""
+		try:
+			season_out, scenario_out, scenario_num = parse_scenario_title(title)
+		except ValueError as error:
+			return str(error)
+
+		tier: str = str(title.replace(").pdf", "").split(" ")[-1])
+		season_dir = os.path.join(directories["Modules"], season_out)
+		check_dir(season_dir)
+
+		try:
+			int(tier.split("-")[0])
+			output_dir = os.path.join(season_dir, scenario_out + f"({tier})")
+		except ValueError:
+			output_dir = os.path.join(season_dir, scenario_out)
+		check_dir(output_dir)
+
+		extract_images(output_dir, doc, season_out, scenario_num)
+		extract_text(output_dir, doc)
+		return ""
+	finally:
+		doc.close()
 
 
 def extract_images(output_dir, doc, season, scenario):
@@ -102,8 +66,6 @@ def extract_images(output_dir, doc, season, scenario):
 
 
 def extract_text(output_dir, doc):
-	page_list: list = []
-	
 	line_dict: dict = {f"Page.Block.Line.Span": {
 		"size": "float",
 		"font": "string",
